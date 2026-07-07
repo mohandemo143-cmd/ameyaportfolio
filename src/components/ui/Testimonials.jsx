@@ -42,6 +42,7 @@ const testimonials = [
     org: "VETECH NDT & Metallurgical",
   },
 ];
+
 export default function Testimonials() {
   const ref = useRef(null);
   const [active, setActive] = useState(0);
@@ -105,16 +106,23 @@ export default function Testimonials() {
     setDragging(false);
   }
 
-  // Throttled Wheel/Trackpad support
+  // Improved Throttled Wheel/Trackpad support (prevents jitter/fighting)
   function handleWheel(e) {
     if (wheelTimeout.current) return;
 
-    if (e.deltaX > 20 || e.deltaY > 20) {
+    // Determine the dominant scroll direction to prevent diagonal trackpad glitching
+    const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+    const dominantDelta = isHorizontal ? e.deltaX : e.deltaY;
+    
+    const threshold = 20;
+
+    if (dominantDelta > threshold) {
       goNext();
-      wheelTimeout.current = setTimeout(() => { wheelTimeout.current = null }, 300);
-    } else if (e.deltaX < -20 || e.deltaY < -20) {
+      // 400ms timeout eats the trackpad "inertia" events to prevent rapid fire
+      wheelTimeout.current = setTimeout(() => { wheelTimeout.current = null }, 400);
+    } else if (dominantDelta < -threshold) {
       goPrev();
-      wheelTimeout.current = setTimeout(() => { wheelTimeout.current = null }, 300);
+      wheelTimeout.current = setTimeout(() => { wheelTimeout.current = null }, 400);
     }
   }
 
