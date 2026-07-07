@@ -9,7 +9,7 @@ function SectionHeader({ eyebrow, title }) {
       <p className="text-xs uppercase tracking-[0.3em] text-foreground/40">
         {eyebrow}
       </p>
-      <h2 className="mt-3 text-balance text-4xl font-medium leading-tight md:text-5xl">
+      <h2 className="mt-3 text-balance text-3xl font-medium leading-tight md:text-5xl">
         {title}
       </h2>
     </div>
@@ -17,66 +17,86 @@ function SectionHeader({ eyebrow, title }) {
 }
 
 const testimonials = [
-  { quote: "Ameya rebuilt our HR backbone in months — what consultancies had failed to do in years.", role: "CHRO", org: "Global Manufacturing" },
-  { quote: "The AI assessment platform transformed our campus hiring funnel. Pure engineering elegance.", role: "VP Talent", org: "Enterprise SaaS" },
-  { quote: "Their SAP integration eliminated three layers of manual reconciliation overnight.", role: "CFO", org: "Multinational Logistics" },
-  { quote: "Best technical partner we've worked with. Period.", role: "CTO", org: "Fintech Scale-up" },
+  { quote: "This talented guys developed my mediacl eccomerece website to level to very simple and interactive", role: "CEO", org: "Surgical World" },
+  { quote: "Ameya helps us when we need support", role: "CEO", org: "Orange Solutions pvt ltd" },
+  { quote: "Developed a platform for us to get a competative in this youtube industries and media solutions", role: "Head of Operations", org: "Jaitra media" },
+  { quote: "Designed and delivered a exceptional website for us", role: "CTO", org: "VETECH NDT & Metallurgical " },
 ];
 
 export default function Testimonials() {
   const ref = useRef(null);
   const [active, setActive] = useState(0);
   const [dragging, setDragging] = useState(false);
+  const [dragStartX, setDragStartX] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const wheelTimeout = useRef(null);
   const prefersReducedMotion = useReducedMotion();
+  const total = testimonials.length;
 
-  // Auto-scroll logic with pause on hover
+  // Auto-scroll logic with pause on hover/drag
   useEffect(() => {
     if (dragging || isHovered || prefersReducedMotion) return;
 
     const interval = setInterval(() => {
-      setActive((prev) => (prev + 1) % testimonials.length);
+      setActive((prev) => (prev + 1) % total);
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [dragging, isHovered, prefersReducedMotion]);
+  }, [dragging, isHovered, prefersReducedMotion, total]);
+
+  // Seamless looping navigation
+  const goNext = useCallback(() => {
+    setActive((prev) => (prev + 1) % total);
+  }, [total]);
+
+  const goPrev = useCallback(() => {
+    setActive((prev) => (prev - 1 + total) % total);
+  }, [total]);
 
   const goTo = useCallback((index) => {
-    setActive(Math.max(0, Math.min(testimonials.length - 1, index)));
-  }, []);
+    setActive((index + total) % total);
+  }, [total]);
 
-  const goNext = () => goTo(active + 1);
-  const goPrev = () => goTo(active - 1);
-
-  const updateFromPointer = useCallback((clientX) => {
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const progress = (clientX - rect.left) / rect.width;
-    const index = Math.min(
-      testimonials.length - 1,
-      Math.max(0, Math.floor(progress * testimonials.length))
-    );
-    goTo(index);
-  }, [goTo]);
-
-  // Click handler for individual cards
-  const handleCardClick = (index) => {
-    goTo(index);
-  };
+  // --- Interaction Handlers ---
 
   function handlePointerDown(e) {
     setDragging(true);
-    updateFromPointer(e.clientX);
+    setDragStartX(e.clientX || (e.touches && e.touches[0].clientX));
   }
 
   function handlePointerMove(e) {
     if (!dragging) return;
-    updateFromPointer(e.clientX);
+    
+    const currentX = e.clientX || (e.touches && e.touches[0].clientX);
+    if (!currentX) return;
+
+    const deltaX = currentX - dragStartX;
+    const swipeThreshold = 50; // Distance required to trigger slide
+
+    if (deltaX > swipeThreshold) {
+      goPrev(); // Swiping right pulls previous item
+      setDragStartX(currentX);
+    } else if (deltaX < -swipeThreshold) {
+      goNext(); // Swiping left pulls next item
+      setDragStartX(currentX);
+    }
   }
 
   function handlePointerUp() {
     setDragging(false);
+  }
+
+  // Throttled Wheel/Trackpad support
+  function handleWheel(e) {
+    if (wheelTimeout.current) return;
+
+    if (e.deltaX > 20 || e.deltaY > 20) {
+      goNext();
+      wheelTimeout.current = setTimeout(() => { wheelTimeout.current = null }, 300);
+    } else if (e.deltaX < -20 || e.deltaY < -20) {
+      goPrev();
+      wheelTimeout.current = setTimeout(() => { wheelTimeout.current = null }, 300);
+    }
   }
 
   function handleKeyDown(e) {
@@ -91,8 +111,7 @@ export default function Testimonials() {
   }
 
   return (
-    // Adjusted padding from py-32 to py-16 to reduce section spacing
-    <section className="relative py-16">
+    <section className="relative py-8 md:py-12">
       <div className="container mx-auto max-w-7xl px-6">
         <SectionHeader eyebrow="Voices" title="Trusted by the ambitious." />
       </div>
@@ -102,24 +121,32 @@ export default function Testimonials() {
         role="region"
         tabIndex={0}
         aria-label="Client Testimonials"
+        // Touch & Swipe Events
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
         onPointerCancel={handlePointerUp}
+        // Wheel & Keyboard
+        onWheel={handleWheel}
         onKeyDown={handleKeyDown}
+        // Hover (Auto-scroll Synergy)
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="relative mt-16 h-[420px] touch-pan-y select-none outline-none cursor-grab active:cursor-grabbing"
+        className="relative mt-8 h-[360px] touch-pan-y select-none outline-none cursor-grab active:cursor-grabbing overflow-hidden"
       >
         {testimonials.map((item, index) => {
-          const offset = index - active;
+          // Circular offset for infinite visual loop
+          let offset = index - active;
+          if (offset > total / 2) offset -= total;
+          if (offset < -total / 2) offset += total;
+
           const isActive = offset === 0;
 
           return (
             <motion.div
               key={index}
-              onClick={() => handleCardClick(index)}
+              onClick={() => goTo(index)}
               animate={{
                 x: `calc(50% + ${offset * 360}px - 50%)`,
                 scale: isActive ? 1 : 0.85,
@@ -131,9 +158,9 @@ export default function Testimonials() {
                 ? { duration: 0.2 } 
                 : { type: "spring", damping: 22, stiffness: 140 }
               }
-              className="pointer-events-auto absolute left-1/2 top-1/2 w-[340px] -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+              className={`absolute left-1/2 top-1/2 w-[340px] -translate-x-1/2 -translate-y-1/2 ${isActive ? 'cursor-default' : 'cursor-pointer pointer-events-auto'}`}
             >
-              <div className="glass relative overflow-hidden rounded-3xl p-8">
+              <div className="glass relative overflow-hidden rounded-3xl p-8 shadow-sm">
                 {isActive && (
                   <div
                     className="absolute -inset-px -z-10 rounded-3xl opacity-80 blur-md motion-safe:animate-[spin_6s_linear_infinite]"
@@ -149,7 +176,7 @@ export default function Testimonials() {
                   <p className="text-xs uppercase tracking-[0.22em] text-foreground/50">
                     <span className="text-foreground/70">{item.role}</span>
                     <span className="mx-2 text-foreground/30">·</span>
-                    <span className="font-mono normal-case tracking-normal text-foreground/40">{item.org}</span>
+                    <span className="font-mono normal-case tracking-normal text-foreground/40 line-clamp-1">{item.org}</span>
                   </p>
                 </div>
               </div>
@@ -159,7 +186,7 @@ export default function Testimonials() {
       </div>
 
       {/* Navigation Arrows */}
-      <div className="mt-8 flex items-center justify-center gap-6">
+      <div className="mt-2 flex items-center justify-center gap-6">
         <button
           onClick={goPrev}
           className="group flex h-12 w-12 items-center justify-center rounded-full border border-foreground/20 transition-all hover:border-primary/50 hover:bg-primary/5 active:scale-95"

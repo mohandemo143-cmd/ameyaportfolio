@@ -4,7 +4,8 @@ import { Cursor } from "@/components/ui/cursor";
 import { Work } from "@/components/ui/work";
 import Testimonials from "@/components/ui/Testimonials";
 import { Why } from "@/components/ui/Why";
-import { TechStack } from "@/components/ui/techstack";
+// ✅ UPDATED IMPORT: Pulling in the new ServicesCarousel component
+import { ServicesCarousel } from "@/components/ui/techstack";
 
 export default function Home() {
   return (
@@ -40,7 +41,8 @@ export default function Home() {
 
       {/* STACK / TECH SECTION */}
       <section id="stack" className="w-full">
-        <TechStack />
+        {/* ✅ UPDATED COMPONENT: Using the new carousel */}
+        <ServicesCarousel />
       </section>
 
       {/* TESTIMONIALS (Optional - you can keep or move) */}
