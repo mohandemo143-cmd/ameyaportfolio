@@ -14,7 +14,7 @@ export function Footer() {
           </div>
           {[
             { h: "Studio", l: ["Work", "Services", "Process", "Contact"] },
-            { h: "Contact", l: ["hello@ameyait.com", "Hyderabad · India", "Mon–Fri · IST"] },
+            { h: "Contact", l: ["info@ameyait.com", "+91 7993174833", "3rd floor, Plot No. 37/A, Vengal Rao Nagar, Sunder Nagar, Hyderabad, Telangana 500038"] },
           ].map((c) => (
             <div key={c.h}>
               <div className="text-xs uppercase tracking-widest text-foreground/40">{c.h}</div>

@@ -27,8 +27,9 @@ export function Contact() {
           </p>
           <dl className="mt-12 space-y-6">
             {[
-              ["Email", "hello@ameyait.com"],
-              ["Headquarters", "Hyderabad · India"],
+              ["Email", "info@ameyait.com"],
+              ["Phone", "+91 7993174833"],
+              ["Address", "3rd floor, Plot No. 37/A, Vengal Rao Nagar, Sunder Nagar, Hyderabad, Telangana 500038"],
               ["Hours", "Mon–Fri · 9am – 7pm IST"],
             ].map(([k, v]) => (
               <div key={k} className="border-t border-foreground/10 pt-4">

@@ -17,12 +17,31 @@ function SectionHeader({ eyebrow, title }) {
 }
 
 const testimonials = [
-  { quote: "This talented guys developed my mediacl eccomerece website to level to very simple and interactive", role: "CEO", org: "Surgical World" },
-  { quote: "Ameya helps us when we need support", role: "CEO", org: "Orange Solutions pvt ltd" },
-  { quote: "Developed a platform for us to get a competative in this youtube industries and media solutions", role: "Head of Operations", org: "Jaitra media" },
-  { quote: "Designed and delivered a exceptional website for us", role: "CTO", org: "VETECH NDT & Metallurgical " },
+  {
+    quote:
+      "Delivered our medical eCommerce platform with exceptional quality, performance, and a seamless user experience.",
+    role: "CEO",
+    org: "Surgical World",
+  },
+  {
+    quote:
+      "A reliable technology partner providing prompt support and dependable solutions whenever we need them.",
+    role: "CEO",
+    org: "Orange Solutions Pvt. Ltd.",
+  },
+  {
+    quote:
+      "Built a powerful YouTube analytics platform that gives us valuable insights and a competitive edge.",
+    role: "Head of Operations",
+    org: "Jaitra Media",
+  },
+  {
+    quote:
+      "Designed and delivered a modern, professional website that perfectly represents our brand.",
+    role: "CTO",
+    org: "VETECH NDT & Metallurgical",
+  },
 ];
-
 export default function Testimonials() {
   const ref = useRef(null);
   const [active, setActive] = useState(0);

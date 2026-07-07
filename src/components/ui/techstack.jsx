@@ -116,13 +116,13 @@ export function ServicesCarousel() {
     if (!currentX) return;
 
     const deltaX = currentX - dragStartX;
-    const swipeThreshold = 50; // How far to drag before triggering a slide
+    const swipeThreshold = 50; 
 
     if (deltaX > swipeThreshold) {
-      setActive((prev) => (prev - 1 + total) % total); // Swipe right (prev)
+      setActive((prev) => (prev - 1 + total) % total); 
       setDragStartX(currentX);
     } else if (deltaX < -swipeThreshold) {
-      setActive((prev) => (prev + 1) % total); // Swipe left (next)
+      setActive((prev) => (prev + 1) % total); 
       setDragStartX(currentX);
     }
   };
@@ -131,22 +131,28 @@ export function ServicesCarousel() {
     setDragging(false);
   };
 
-  // Wheel scroll handling with throttle to prevent rapid spinning
+  // Fixed Wheel scroll handling for trackpads
   const handleWheel = (e) => {
     if (wheelTimeout.current) return;
 
-    // React to horizontal or vertical scrolling
-    if (e.deltaX > 20 || e.deltaY > 20) {
+    // Determine the dominant scroll direction to prevent diagonal trackpad glitching
+    const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+    const dominantDelta = isHorizontal ? e.deltaX : e.deltaY;
+    
+    const threshold = 20;
+
+    if (dominantDelta > threshold) {
       setActive((prev) => (prev + 1) % total);
-      wheelTimeout.current = setTimeout(() => { wheelTimeout.current = null }, 300);
-    } else if (e.deltaX < -20 || e.deltaY < -20) {
+      // Increased throttle slightly to 400ms to eat the trackpad "inertia" events
+      wheelTimeout.current = setTimeout(() => { wheelTimeout.current = null }, 400);
+    } else if (dominantDelta < -threshold) {
       setActive((prev) => (prev - 1 + total) % total);
-      wheelTimeout.current = setTimeout(() => { wheelTimeout.current = null }, 300);
+      wheelTimeout.current = setTimeout(() => { wheelTimeout.current = null }, 400);
     }
   };
 
   return (
-    <section className="relative py-24 overflow-hidden bg-background">
+    <section className="relative py-12 overflow-hidden bg-background">
       <div className="container mx-auto max-w-7xl px-6 text-center">
         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-600 dark:text-cyan-400 opacity-80">
           Our Expertise
@@ -164,27 +170,22 @@ export function ServicesCarousel() {
         role="region"
         tabIndex={0}
         aria-label="Our Services"
-        // Touch & Mouse events for Swiping
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        // Hover events to pause auto-scroll
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        // Wheel event for trackpad/mouse scrolling
         onWheel={handleWheel}
-        className="relative mt-16 h-[200px] w-full touch-pan-y select-none outline-none cursor-grab active:cursor-grabbing"
+        className="relative mt-8 h-[160px] w-full touch-pan-y select-none outline-none cursor-grab active:cursor-grabbing"
       >
         {services.map((service, index) => {
           let offset = index - active;
           if (offset > total / 2) offset -= total;
           if (offset < -total / 2) offset += total;
 
-          // Hide elements that are too far away for performance and visual clarity
           const isVisible = Math.abs(offset) <= (isMobile ? 2 : 3); 
-          // Adjust gap width based on screen size
           const ITEM_WIDTH = isMobile ? 260 : 380; 
 
           return (
@@ -195,7 +196,6 @@ export function ServicesCarousel() {
                 opacity: isVisible ? 1 - Math.abs(offset) * (isMobile ? 0.35 : 0.25) : 0, 
                 scale: isVisible ? 1 - Math.abs(offset) * 0.1 : 0.8,
                 zIndex: 20 - Math.abs(offset),
-                // Slight Y offset for a curved carousel feel
                 y: `calc(-50% + ${Math.abs(offset) * 10}px)`
               }}
               transition={prefersReducedMotion
