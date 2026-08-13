@@ -25,7 +25,7 @@ const testimonials = [
   },
   {
     quote:
-      "A reliable technology partner providing prompt support and dependable solutions whenever we need them.",
+      "A reliable technology partner providing support and dependable solutions whenever we need them.",
     role: "CEO",
     org: "Orange Solutions Pvt. Ltd.",
   },

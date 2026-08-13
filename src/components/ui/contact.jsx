@@ -38,7 +38,7 @@ export function Contact() {
           <dl className="mt-12 space-y-6">
             {[
               ["Email", "info@ameyait.com"],
-              ["Phone", "+91 7993174833"],
+              ["Phone", "+91 9398908939"],
               [
                 "Address",
                 "3rd Floor, Plot No. 37/A, Vengal Rao Nagar, Sunder Nagar, Hyderabad, Telangana 500038",

@@ -18,12 +18,12 @@ export function Nav() {
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       className="fixed left-1/2 top-5 z-50 w-[92%] max-w-fit -translate-x-1/2 md:w-auto"
     >
-      {/* Main Floating Pill - Reduced vertical padding (py-1 on mobile, py-1.5 on desktop) */}
+      {/* Main Floating Pill */}
       <div className="glass flex w-full items-center justify-between gap-2 rounded-full px-2 py-1 sm:px-3 sm:py-1.5">
         
-        {/* Logo Container - Scaled down further to prevent vertical stretching */}
-        <div className="flex w-[100px] shrink-0 items-center overflow-hidden pl-2 sm:w-[120px]">
-          <div className="origin-left scale-[0.55] sm:scale-[0.65]">
+        {/* Logo Container - Improved Alignment & Bigger Logo */}
+        <div className="flex h-10 w-[110px] shrink-0 items-center justify-center pl-1 sm:w-[130px]">
+          <div className="origin-left scale-[0.75] sm:scale-[0.85]">
             <Logo />
           </div>
         </div>
@@ -36,7 +36,6 @@ export function Nav() {
               <a
                 key={i}
                 href={`/#${section}`}
-                /* Reduced link padding from py-1.5 to py-1 */
                 className="rounded-full px-3 py-1 text-sm font-medium text-foreground/70 transition hover:bg-foreground/5 hover:text-foreground"
               >
                 {i}
@@ -45,15 +44,13 @@ export function Nav() {
           })}
         </nav>
 
-        {/* Right Side: CTA (Desktop) & Hamburger (Mobile) */}
+        {/* Right Side: CTA + Hamburger */}
         <div className="flex shrink-0 items-center">
-          
           {/* Desktop CTA */}
           <div className="hidden sm:block">
             <Magnetic>
               <a
                 href="/#contact"
-                /* Reduced button padding from py-2 to py-1.5 */
                 className="ml-1 inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-1.5 text-sm font-medium text-background transition hover:bg-foreground/90"
               >
                 Start a project <span aria-hidden>→</span>
@@ -61,7 +58,7 @@ export function Nav() {
             </Magnetic>
           </div>
 
-          {/* Mobile Menu Button - Shrunk slightly to match slimmer height */}
+          {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="ml-1 flex h-8 w-8 items-center justify-center rounded-full bg-foreground/10 text-foreground transition hover:bg-foreground/20 md:hidden"
@@ -72,7 +69,7 @@ export function Nav() {
         </div>
       </div>
 
-      {/* Mobile Dropdown Menu (Remains the same) */}
+      {/* Mobile Dropdown Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
